@@ -1,5 +1,5 @@
 {
-  "address": "0x34fa48055644E9aCEb17E032302649439Bb3E5e3",
+  "address": "0xbE2f17912cc4E74Df39FCFb3Bb79C46A02c8B7bF",
   "network": "sepolia",
   "abi": [
     "function publishPost(string memory ipfsHash, address userAddress, uint256 root, uint256 nullifierHash, uint256[8] calldata proof) external",

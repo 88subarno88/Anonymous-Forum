@@ -11,8 +11,8 @@ async function main() {
   const WORLD_ID_ROUTER_SEPOLIA = "0x469449f251692e0779667583026b5a1e99512157";
   
   // Your World ID App configuration (must match frontend exactly!)
-  const APP_ID = "app_staging_f5218347f9ff75fe3a2cc7b837728d931";
-  const ACTION_ID = "Anonymous News Forum15"; // ✅ Matches your World ID app name
+  const APP_ID = "app_staging_f52183479ff75fe3a2cc7b837728d931";
+  const ACTION_ID = "anonymous-news-forum15"; // ✅ Matches your World ID app name
 
   // ============================================
   // DEPLOYMENT

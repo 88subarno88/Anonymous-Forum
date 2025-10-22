@@ -8,7 +8,7 @@ import contractInfo from './contractInfo.json';
 import './App.css';
 
 // 1. IMPORTANT: Remember to paste your Lighthouse API key here!
-const LIGHTHOUSE_API_KEY = "YOUR_LIGHTHOUSE_API_KEY_HERE";
+const LIGHTHOUSE_API_KEY = "1abba7a0.8d87bb5286174dd6aa34f34cfcd4fc4b";
 
 // This component handles displaying and decrypting a single post
 function PostItem({ post, litNodeClient }) {

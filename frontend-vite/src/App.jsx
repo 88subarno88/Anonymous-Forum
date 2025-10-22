@@ -10,11 +10,11 @@ import "./App.css";
 const LIGHTHOUSE_API_KEY = "1abba7a0.8d87bb5286174dd6aa34f34cfcd4fc4b";
 
 // World ID Configuration - Must match your contract deployment
-const WORLD_ID_APP_ID = "app_staging_f5218347f9ff75fe3a2cc7b837728d931";
-const WORLD_ID_ACTION = "Anonymous News Forum15";
+const WORLD_ID_APP_ID = "app_staging_f52183479ff75fe3a2cc7b837728d931";
+const WORLD_ID_ACTION = "anonymous-news-forum15";
 
 // Contract Configuration - Updated with your newly deployed contract
-const CONTRACT_ADDRESS = "0x202AaBe82dacE4E262654e4aed675F84645f831F";
+const CONTRACT_ADDRESS = "0xbE2f17912cc4E74Df39FCFb3Bb79C46A02c8B7bF";
 const CONTRACT_ABI = [
   "function publishPost(string memory ipfsHash, address userAddress, uint256 root, uint256 nullifierHash, uint256[8] calldata proof) external",
   "function posts(uint256) external view returns (uint256 id, string memory ipfsHash, uint256 anonymousAuthorId)",
@@ -320,7 +320,7 @@ function App() {
         nullifierHash,
         proofArray,
         {
-          gasLimit: 500000
+          gasLimit: 2000000
         }
       );
       
