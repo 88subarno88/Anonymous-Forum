@@ -1,0 +1,9 @@
+{
+  "address": "0x3259351006d4e83a5a323429323b53a073570081",
+ "abi": [
+  "event PostPublished(uint256 id, string ipfsHash, uint256 anonymousAuthorId)",
+  "function postCount() view returns (uint256)",
+  "function posts(uint256) view returns (uint256 id, string ipfsHash, uint256 anonymousAuthorId)",
+  "function publishPost(string ipfsHash, address userAddress, uint256 root, uint256 nullifierHash, uint256[8] proof)"
+]
+}

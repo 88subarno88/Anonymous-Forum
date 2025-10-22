@@ -1,0 +1,185 @@
+/* Global Styles & Body */
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue',
+    Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #1a1a1a; /* Dark charcoal background */
+  color: #eeeeee; /* Off-white text */
+}
+
+/* Main App Container */
+.App {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px 40px;
+}
+
+.App-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+}
+
+h1 {
+  font-size: 2.8rem;
+  font-weight: 600;
+  margin: 20px 0;
+  color: #fff;
+  letter-spacing: -1px;
+}
+
+h2 {
+  font-size: 1.5rem;
+  color: #a0a0a0;
+  border-bottom: 1px solid #333;
+  padding-bottom: 10px;
+  width: 100%;
+  text-align: center;
+  margin-top: 50px;
+  font-weight: 400;
+}
+
+/* Button Styles */
+button {
+  background: linear-gradient(45deg, #007bff, #0056b3);
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+}
+
+button:disabled {
+  background: #444;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: translateY(0);
+}
+
+p {
+  margin: 5px 0;
+  line-height: 1.6;
+}
+
+/* Post Submission Form */
+.post-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 15px;
+  margin-bottom: 40px;
+  background-color: #242424;
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid #333;
+}
+
+.post-form textarea {
+  width: calc(100% - 30px);
+  min-height: 120px;
+  padding: 15px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  background-color: #1e1e1e;
+  color: #eee;
+}
+
+.post-form textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+.post-form button {
+  align-self: flex-end;
+  width: auto;
+}
+
+/* Dropzone Styling */
+.dropzone {
+  border: 2px dashed #444;
+  border-radius: 8px;
+  padding: 25px;
+  text-align: center;
+  color: #888;
+  cursor: pointer;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+.dropzone.active {
+  border-color: #007bff;
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+/* Posts Feed */
+.posts-feed {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 30px;
+}
+
+.post {
+  background-color: #242424;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.post p {
+  word-wrap: break-word; 
+}
+
+.post strong {
+  color: #00aaff;
+  font-weight: 600;
+}
+
+.proof-section {
+  margin-top: 20px;
+}
+
+.proof-section button {
+  background: #333;
+  font-weight: 500;
+}
+
+.proof-section button:hover {
+  background: #444;
+}
+
+.author-id {
+  font-size: 0.8rem;
+  color: #777;
+  margin-top: 20px;
+  font-family: monospace;
+  word-break: break-all;
+}
+
+.message {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: rgba(0, 123, 255, 0.1);
+  color: #00aaff;
+  border: 1px solid #007bff;
+  text-align: center;
+}
+

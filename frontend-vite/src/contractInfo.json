@@ -1,0 +1,14 @@
+{
+  "address": "0x34fa48055644E9aCEb17E032302649439Bb3E5e3",
+  "network": "sepolia",
+  "abi": [
+    "function publishPost(string memory ipfsHash, address userAddress, uint256 root, uint256 nullifierHash, uint256[8] calldata proof) external",
+    "function posts(uint256) external view returns (uint256 id, string memory ipfsHash, uint256 anonymousAuthorId)",
+    "function postCount() external view returns (uint256)",
+    "function usedNullifiers(uint256) external view returns (bool)",
+    "function isNullifierUsed(uint256 nullifierHash) external view returns (bool)",
+    "function getAppId() external view returns (uint256)",
+    "function getActionId() external view returns (uint256)",
+    "event PostPublished(uint256 id, string ipfsHash, uint256 anonymousAuthorId)"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "anonymous-news-forum",
+  "version": "1.0.0",
+  "type": "module",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@semaphore-protocol/contracts": "4.0.0",
+    "@semaphore-protocol/identity": "4.0.0",
+    "@semaphore-protocol/proof": "4.0.0",
+    "dotenv": "^16.4.5",
+    "hardhat": "^2.26.3"
+  },
+  "dependencies": {
+    "@sismo-core/sismo-connect-solidity": "^0.0.21",
+    "@worldcoin/idkit": "^2.4.2",
+    "@worldcoin/world-id-contracts": "^0.1.1"
+  }
+}
