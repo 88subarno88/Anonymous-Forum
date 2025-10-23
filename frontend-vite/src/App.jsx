@@ -6,15 +6,17 @@ import lighthouse from "@lighthouse-web3/sdk";
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import "./App.css";
 
+// NOTE: NOT importing contractInfo.json - using hardcoded values instead
+
 // Lighthouse API key
 const LIGHTHOUSE_API_KEY = "1abba7a0.8d87bb5286174dd6aa34f34cfcd4fc4b";
 
 // World ID Configuration - Must match your contract deployment
 const WORLD_ID_APP_ID = "app_staging_f52183479ff75fe3a2cc7b837728d931";
-const WORLD_ID_ACTION = "anonymous-news-forum15";
+const WORLD_ID_ACTION = "anonymous-news-forum15"; // ✅ Matches World ID portal identifier
 
-// Contract Configuration - Updated with your newly deployed contract
-const CONTRACT_ADDRESS = "0xbE2f17912cc4E74Df39FCFb3Bb79C46A02c8B7bF";
+// Contract Configuration - Updated with your newly deployed contract (with groupId fix!)
+const CONTRACT_ADDRESS = "0x14ab6A6685477121d2B091e567bB5E2C092a6ffd";
 const CONTRACT_ABI = [
   "function publishPost(string memory ipfsHash, address userAddress, uint256 root, uint256 nullifierHash, uint256[8] calldata proof) external",
   "function posts(uint256) external view returns (uint256 id, string memory ipfsHash, uint256 anonymousAuthorId)",
@@ -136,6 +138,33 @@ function App() {
         );
         setReadOnlyContract(contract);
 
+        // DIAGNOSTIC: Check what's in the contract
+        try {
+          const contractAppId = await contract.getAppId();
+          const contractActionId = await contract.getActionId();
+          
+          const expectedAppId = ethers.keccak256(ethers.toUtf8Bytes(WORLD_ID_APP_ID));
+          const expectedActionId = ethers.keccak256(ethers.toUtf8Bytes(WORLD_ID_ACTION));
+          
+          console.log("=== CONTRACT VERIFICATION ===");
+          console.log("Contract Address:", CONTRACT_ADDRESS);
+          console.log("Contract App ID (hashed):", contractAppId.toString());
+          console.log("Expected App ID (hashed):", BigInt(expectedAppId).toString());
+          console.log("App ID Match:", contractAppId.toString() === BigInt(expectedAppId).toString() ? "✅ YES" : "❌ NO");
+          console.log("");
+          console.log("Contract Action ID (hashed):", contractActionId.toString());
+          console.log("Expected Action ID (hashed):", BigInt(expectedActionId).toString());
+          console.log("Action ID Match:", contractActionId.toString() === BigInt(expectedActionId).toString() ? "✅ YES" : "❌ NO");
+          console.log("============================");
+          
+          if (contractAppId.toString() !== BigInt(expectedAppId).toString() || 
+              contractActionId.toString() !== BigInt(expectedActionId).toString()) {
+            setMessage("⚠️ Warning: Contract App ID or Action ID doesn't match frontend configuration. Check console for details.");
+          }
+        } catch (diagError) {
+          console.error("Could not verify contract IDs:", diagError);
+        }
+
         await fetchPosts(contract);
 
         contract.on("PostPublished", (id, ipfsHash, anonymousAuthorId) => {
@@ -184,6 +213,10 @@ function App() {
 
   // ---------- World ID proof + publish logic ----------
   const handleWorldIdSuccess = async (proofResult) => {
+    console.log("=== World ID Verification Success ===");
+    console.log("Proof result:", JSON.stringify(proofResult, null, 2));
+    console.log("====================================");
+    
     if (!postText && !postImage) {
       setMessage("Cannot publish an empty post.");
       return;
@@ -310,6 +343,34 @@ function App() {
       } catch (checkError) {
         console.warn("Could not check nullifier status:", checkError);
       }
+
+      // Simulate the transaction first to catch errors early
+      setMessage("Validating transaction with smart contract...");
+      try {
+        await writeableContract.publishPost.staticCall(
+          metadataHash,
+          userAddress,
+          merkleRoot,
+          nullifierHash,
+          proofArray
+        );
+        console.log("✓ Transaction simulation successful - contract will accept this");
+      } catch (simError) {
+        console.error("❌ Transaction simulation failed:", simError);
+        
+        let simErrorMsg = "❌ Smart contract rejected the transaction:\n\n";
+        
+        if (simError.message?.includes("NullifierAlreadyUsed")) {
+          simErrorMsg += "This World ID proof was already used. Verify again for a fresh proof.";
+        } else if (simError.message?.includes("InvalidWorldIDProof")) {
+          simErrorMsg += "World ID proof verification FAILED in contract.\n\nThis usually means:\n• App ID mismatch between contract and World ID portal\n• Action ID mismatch\n• Invalid proof format\n\nContract expects:\nApp: app_staging_f52183479ff75fe3a2cc7b837728d931\nAction: anonymous-news-forum15";
+        } else {
+          simErrorMsg += simError.reason || simError.message || "Unknown contract error";
+        }
+        
+        setMessage(simErrorMsg);
+        return;
+      }
       
       setMessage("Submitting transaction to blockchain...");
       
@@ -320,7 +381,7 @@ function App() {
         nullifierHash,
         proofArray,
         {
-          gasLimit: 2000000
+          gasLimit: 20000000
         }
       );
       
@@ -349,19 +410,27 @@ function App() {
       console.error("====================");
 
       // User-friendly error messages
+      let errorMsg = "❌ Publishing failed: ";
+      
       if (error.code === "ACTION_REJECTED") {
-        setMessage("❌ You rejected the transaction in MetaMask.");
+        errorMsg = "❌ You rejected the transaction in MetaMask.";
       } else if (error.code === "INSUFFICIENT_FUNDS") {
-        setMessage("❌ Insufficient Sepolia ETH for gas fees. Get free testnet ETH from a Sepolia faucet.");
+        errorMsg = "❌ Insufficient Sepolia ETH for gas fees. Get free testnet ETH from a Sepolia faucet.";
       } else if (error.message?.includes("NullifierAlreadyUsed")) {
-        setMessage("❌ This World ID proof has already been used. Please verify with World ID again to get a fresh proof.");
+        errorMsg = "❌ This World ID proof has already been used. Please verify with World ID again to get a fresh proof.";
       } else if (error.message?.includes("InvalidWorldIDProof")) {
-        setMessage("❌ World ID verification failed. This could mean the proof is invalid or doesn't match your contract's app_id/action. Please try verifying again.");
-      } else if (error.code === "CALL_EXCEPTION") {
-        setMessage("❌ Transaction failed. Common reasons:\n\n1. World ID proof already used (verify again)\n2. Invalid World ID verification\n3. App ID or Action mismatch\n\nCheck console for details.");
+        errorMsg = "❌ World ID verification FAILED in smart contract.\n\nThis means:\n- App ID in contract doesn't match World ID portal\n- Action ID in contract doesn't match World ID portal\n- Or the proof itself is invalid\n\nContract deployed with:\nApp: app_staging_f52183479ff75fe3a2cc7b837728d931\nAction: anonymous-news-forum15";
+      } else if (error.shortMessage) {
+        errorMsg += error.shortMessage;
+      } else if (error.reason) {
+        errorMsg += error.reason;
+      } else if (error.message) {
+        errorMsg += error.message;
       } else {
-        setMessage(`❌ Publishing failed: ${error.reason || error.message || "Unknown error. Check console for details."}`);
+        errorMsg += "Unknown error. Check console.";
       }
+      
+      setMessage(errorMsg);
     } finally {
       setIsUploading(false);
     }
@@ -399,7 +468,13 @@ function App() {
             app_id={WORLD_ID_APP_ID}
             action={WORLD_ID_ACTION}
             onSuccess={handleWorldIdSuccess}
+            onError={(error) => {
+              console.error("World ID Error:", error);
+              setMessage(`World ID verification failed: ${error.message || JSON.stringify(error)}`);
+            }}
             verification_level={VerificationLevel.Device}
+            enableTelemetry
+            bridge_url="https://bridge.worldcoin.org"
           >
             {({ open }) => (
               <button onClick={open} disabled={isUploading}>

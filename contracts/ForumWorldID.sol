@@ -57,10 +57,11 @@ contract ForumWorldID {
         }
 
         // Verify the World ID proof using the hashed values
+        // CRITICAL: Using group 1 which is the default for all World ID verifications
         try _worldId.verifyProof(
             root,
+            1, // groupId - always 1 for World ID
             _appId,
-            _actionId,
             0, // signal (0 is default when no signal is used)
             nullifierHash,
             proof
